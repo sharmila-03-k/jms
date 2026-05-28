@@ -1,16 +1,15 @@
-import Job from "./components/ShowJobs";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ShowJobs from "./components/ShowJobs";
+import Login from "./components/Login";
 
 function App() {
-
-  return (
-
-    <div>
-
-      <Job />
-
-    </div>
-
+   return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/jobs" element={<ShowJobs />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
 export default App;
