@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
@@ -13,15 +13,18 @@ function Login() {
             const response = await axios.post(
                 "http://localhost:5000/api/auth/login",
                 {
-                    email: username,
+                    email: email,
                     password: password
                 }
             );
     console.log(response.data);
     if (response.data.success === true) {
-        navigate("/jobs");
+        setMessage("Login successfully. Redirecting to jobs...");
+        setTimeout(() => {
+            navigate("/jobs");
+        }, 1200);
     } else {
-        setMessage("Invalid Username or Password");
+        setMessage("Invalid Email or Password");
     }
 } catch (error) {
     console.log(error);
@@ -42,9 +45,9 @@ return (
         <form onSubmit={handleLogin}>
             <input
                 type="text"
-                placeholder="Enter Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
             />
             <br /><br />
             <input
