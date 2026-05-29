@@ -1,89 +1,105 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function ShowJobs() {
     const [jobs, setJobs] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
+
     useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/');
+            return;
+        }
+        setLoading(true);
         axios
-            .get("http://localhost:5000/api/jobs")
+            .get("http://localhost:5000/api/jobs", { headers: token ? { Authorization: `Bearer ${token}` } : {} })
             .then((res) => {
                 console.log(res.data);
-                setJobs(res.data.data);
+                setJobs(res.data.data || []);
             })
             .catch((err) => {
                 console.log(err);
+                setJobs([]);
+            })
+            .finally(() => {
+                setLoading(false);
             });
-    }, []);
+    }, [navigate]);
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this job?')) return;
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`http://localhost:5000/api/jobs/${id}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+            setJobs((prev) => prev.filter((j) => j._id !== id));
+        } catch (err) {
+            console.error(err);
+            alert('Failed to delete job');
+        }
+    };
+    
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('recruiter');
+        navigate('/');
+    };
+
     return (
-        <div>
-            <h1
-                style={{
-                    textAlign: "center",
-                    marginBottom: "20px"
-                }}
-            >
-                Job Details
-            </h1>
-            <table
-                border="1"
-                cellPadding="10"
-                style={{
-                    margin: "auto",
-                    borderCollapse: "collapse",
-                    width: "95%"
-                }}
-            >
-            <thead
-    style={{
-        backgroundColor: "black",
-        color: "white"
-    }}
->
-    <tr>
-        <th>Title</th>
-        <th>Company</th>
-        <th>Location</th>
-        <th>Salary</th>
-        <th>Job Type</th>
-        <th>Experience</th>
-        <th>Description</th>
-        <th>Skills</th>
-    </tr>
-</thead>
+        <div style={{ padding: "20px" }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h1>Job Details</h1>
+                <div>
+                    <Link to="/job/new"><button style={{ marginRight: '8px' }}>Create Job</button></Link>
+                    <button onClick={handleLogout}>Logout</button>
+                </div>
+            </div>
+
+            {loading && <p style={{ textAlign: 'center' }}>Loading...</p>}
+
+            <table style={{ borderCollapse: "collapse", width: "100%" }} border="1">
+                <thead style={{ backgroundColor: "black", color: "white" }}>
+                    <tr>
+                        <th>Title</th>
+                        <th>Company</th>
+                        <th>Location</th>
+                        <th>Salary</th>
+                        <th>Job Type</th>
+                        <th>Experience</th>
+                        <th>Description</th>
+                        <th>Skills</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
                 <tbody>
-                    {
-                        jobs.length > 0 ? (
-
-                            jobs.map((job) => (
-
-                                <tr key={job._id}>
-
-                                    <td>{job.title}</td>
-
-                                    <td>{job.companyName}</td>
-
-                                    <td>{job.location}</td>
-
-                                    <td>{job.salary}</td>
-
-                                    <td>{job.jobType}</td>
-
-                                    <td>{job.experience}</td>
-
-                                    <td>{job.description}</td>
-
-                                    <td>{job.skills.join(", ")}</td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="8">
-                                    No Data Found
+                    {jobs.length > 0 ? (
+                        jobs.map((job) => (
+                            <tr key={job._id}>
+                                <td>{job.title}</td>
+                                <td>{job.companyName}</td>
+                                <td>{job.location}</td>
+                                <td>{job.salary}</td>
+                                <td>{job.jobType}</td>
+                                <td>{job.experience}</td>
+                                <td>{job.description}</td>
+                                <td>{Array.isArray(job.skills) ? job.skills.join(", ") : job.skills}</td>
+                                <td>
+                                    <Link to={`/job/${job._id}`}><button>Edit</button></Link>
+                                    &nbsp;
+                                    <button onClick={() => handleDelete(job._id)}>Delete</button>
                                 </td>
-
                             </tr>
-                        )
-                    }
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="9" style={{ textAlign: 'center' }}>
+                                {loading ? "" : "No Data Found"}
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
         </div>

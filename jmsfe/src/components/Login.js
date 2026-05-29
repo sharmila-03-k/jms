@@ -19,10 +19,15 @@ function Login() {
             );
     console.log(response.data);
     if (response.data.success === true) {
-        setMessage("Login successfully. Redirecting to jobs...");
+        setMessage("Login successful. Redirecting to dashboard...");
+        const token = response.data.data && response.data.data.token;
+        if (token) {
+            localStorage.setItem('token', token);
+            localStorage.setItem('recruiter', JSON.stringify(response.data.data));
+        }
         setTimeout(() => {
             navigate("/jobs");
-        }, 1200);
+        }, 800);
     } else {
         setMessage("Invalid Email or Password");
     }
