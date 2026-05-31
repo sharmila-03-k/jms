@@ -39,36 +39,113 @@ function Login() {
 return (
     <div
         style={{
-            border: "2px solid black",
-            padding: "20px",
-            width: "300px",
-            margin: "auto",
-            marginTop: "100px"
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "100vh",
+            backgroundColor: "#f5f5f5"
         }}
     >
-        <h2>Login Page</h2>
-        <form onSubmit={handleLogin}>
-            <input
-                type="text"
-                placeholder="Enter Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <br /><br />
-            <input
-                type="password"
-                placeholder="Enter Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-            <br /><br />
-            <button type="submit">
-                Login
-            </button>
-        </form>
-        <br />
-        <div>
-            {message}
+        <div
+            style={{
+                backgroundColor: "white",
+                padding: "40px",
+                borderRadius: "8px",
+                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                width: "100%",
+                maxWidth: "400px"
+            }}
+        >
+            <h2 style={{ textAlign: "center", color: "#333", marginBottom: "30px" }}>
+                Login Page
+            </h2>
+            <form onSubmit={handleLogin}>
+                <div style={{ marginBottom: "20px" }}>
+                    <label style={{ display: "block", marginBottom: "8px", color: "#555", fontWeight: "500" }}>
+                        Email
+                    </label>
+                    <input
+                        type="text"
+                        placeholder="Enter Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        style={{
+                            width: "100%",
+                            padding: "12px",
+                            border: "1px solid #ddd",
+                            borderRadius: "4px",
+                            fontSize: "14px",
+                            boxSizing: "border-box",
+                            transition: "border-color 0.3s"
+                        }}
+                        onFocus={(e) => e.target.style.borderColor = "#0056b3"}
+                        onBlur={(e) => e.target.style.borderColor = "#ddd"}
+                    />
+                </div>
+                <div style={{ marginBottom: "25px" }}>
+                    <label style={{ display: "block", marginBottom: "8px", color: "#555", fontWeight: "500" }}>
+                        Password
+                    </label>
+                    <input
+                        type="password"
+                        placeholder="Enter Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        style={{
+                            width: "100%",
+                            padding: "12px",
+                            border: "1px solid #ddd",
+                            borderRadius: "4px",
+                            fontSize: "14px",
+                            boxSizing: "border-box",
+                            transition: "border-color 0.3s"
+                        }}
+                        onFocus={(e) => e.target.style.borderColor = "#0056b3"}
+                        onBlur={(e) => e.target.style.borderColor = "#ddd"}
+                    />
+                </div>
+                <button
+                    type="submit"
+                    style={{
+                        width: "100%",
+                        padding: "12px",
+                        backgroundColor: "#0056b3",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        fontSize: "16px",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        transition: "background-color 0.3s, transform 0.2s"
+                    }}
+                    onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = "#004494";
+                        e.target.style.transform = "translateY(-2px)";
+                    }}
+                    onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = "#0056b3";
+                        e.target.style.transform = "translateY(0)";
+                    }}
+                >
+                    Login
+                </button>
+            </form>
+            {message && (
+                <div
+                    style={{
+                        marginTop: "20px",
+                        padding: "12px",
+                        backgroundColor: message.includes("successful") ? "#d4edda" : "#f8d7da",
+                        color: message.includes("successful") ? "#155724" : "#721c24",
+                        borderRadius: "4px",
+                        textAlign: "center",
+                        fontSize: "14px",
+                        border: `1px solid ${message.includes("successful") ? "#c3e6cb" : "#f5c6cb"}`
+                    }}
+                >
+                    {message}
+                </div>
+            )}
         </div>
     </div>
 );

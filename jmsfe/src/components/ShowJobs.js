@@ -30,6 +30,17 @@ function ShowJobs() {
             });
     }, [navigate]);
 
+    const tableButtonStyle = {
+        padding: '6px 12px',
+        border: '1px solid #999',
+        background: '#fff',
+        color: '#333',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        minWidth: '70px'
+    };
+
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this job?')) return;
         try {
@@ -87,9 +98,10 @@ function ShowJobs() {
                                 <td>{job.description}</td>
                                 <td>{Array.isArray(job.skills) ? job.skills.join(", ") : job.skills}</td>
                                 <td>
-                                    <Link to={`/job/${job._id}`}><button>Edit</button></Link>
-                                    &nbsp;
-                                    <button onClick={() => handleDelete(job._id)}>Delete</button>
+                                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'nowrap', alignItems: 'center' }}>
+                                        <Link to={`/job/${job._id}`}><button style={tableButtonStyle}>Edit</button></Link>
+                                        <button style={tableButtonStyle} onClick={() => handleDelete(job._id)}>Delete</button>
+                                    </div>
                                 </td>
                             </tr>
                         ))

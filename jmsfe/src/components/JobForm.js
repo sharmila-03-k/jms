@@ -80,13 +80,56 @@ function JobForm() {
         border: '1px solid #ccc'
     };
 
-    const buttonStyle = {
-        padding: '10px 18px',
+    const primaryButtonStyle = {
+        padding: '12px 28px',
         borderRadius: '4px',
         border: 'none',
         background: '#1976d2',
         color: '#fff',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        fontSize: '16px',
+        fontWeight: '600',
+        transition: 'background-color 0.3s, transform 0.2s'
+    };
+
+    const secondaryButtonStyle = {
+        padding: '12px 28px',
+        borderRadius: '4px',
+        border: '1px solid #ccc',
+        background: '#fff',
+        color: '#333',
+        cursor: 'pointer',
+        fontSize: '16px',
+        fontWeight: '600',
+        transition: 'background-color 0.3s, transform 0.2s, border-color 0.3s'
+    };
+
+    const dangerButtonStyle = {
+        padding: '12px 28px',
+        borderRadius: '4px',
+        border: 'none',
+        background: '#dc3545',
+        color: '#fff',
+        cursor: 'pointer',
+        fontSize: '16px',
+        fontWeight: '600',
+        transition: 'background-color 0.3s, transform 0.2s'
+    };
+
+    const handleDelete = async () => {
+        if (!id) return;
+        const confirmDelete = window.confirm('Are you sure you want to delete this job?');
+        if (!confirmDelete) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`http://localhost:5000/api/jobs/${id}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+            setMessage('Job deleted successfully');
+            setTimeout(() => navigate('/jobs'), 800);
+        } catch (err) {
+            console.error(err);
+            setMessage('Delete operation failed');
+        }
     };
 
     return (
@@ -102,8 +145,55 @@ function JobForm() {
                     <input style={inputStyle} value={experience} onChange={(e) => setExperience(e.target.value)} placeholder="Experience" />
                     <textarea style={{ ...inputStyle, resize: 'vertical' }} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" rows={4} />
                     <input style={inputStyle} value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="Skills (comma separated)" />
-                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '6px' }}>
-                        <button style={buttonStyle} type="submit">{id ? 'Update Job' : 'Create Job'}</button>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', marginTop: '16px' }}>
+                        <button
+                            style={primaryButtonStyle}
+                            type="submit"
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = '#1565c0';
+                                e.target.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = '#1976d2';
+                                e.target.style.transform = 'translateY(0)';
+                            }}
+                        >
+                            {id ? 'Update Job' : 'Create Job'}
+                        </button>
+                        {id && (
+                            <button
+                                style={dangerButtonStyle}
+                                type="button"
+                                onClick={handleDelete}
+                                onMouseEnter={(e) => {
+                                    e.target.style.backgroundColor = '#c82333';
+                                    e.target.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.backgroundColor = '#dc3545';
+                                    e.target.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                Delete Job
+                            </button>
+                        )}
+                        <button
+                            style={secondaryButtonStyle}
+                            type="button"
+                            onClick={() => navigate('/jobs')}
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = '#f5f5f5';
+                                e.target.style.borderColor = '#999';
+                                e.target.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = '#fff';
+                                e.target.style.borderColor = '#ccc';
+                                e.target.style.transform = 'translateY(0)';
+                            }}
+                        >
+                            Cancel
+                        </button>
                     </div>
                 </form>
                 <div style={{ marginTop: '12px', textAlign: 'center', color: message.includes('success') ? 'green' : 'red' }}>{message}</div>
