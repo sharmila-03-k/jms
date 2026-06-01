@@ -1,0 +1,139 @@
+.jobform-container {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f7fb;
+}
+
+.job-card {
+    border: 2px solid #ccc;
+    padding: 24px;
+    width: 600px;
+    max-width: 95%;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background: #fff;
+}
+
+.job-card h2 {
+    text-align: center;
+    margin-top: 0;
+    color: #333;
+    margin-bottom: 24px;
+}
+
+.job-form {
+    display: grid;
+    gap: 12px;
+    align-items: center;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 5px rgba(25, 118, 210, 0.3);
+}
+
+.form-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 5px rgba(25, 118, 210, 0.3);
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.btn-primary {
+    padding: 12px 28px;
+    border-radius: 4px;
+    border: none;
+    background: #1976d2;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #1565c0;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    padding: 12px 28px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s, border-color 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: #f5f5f5;
+    border-color: #999;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    padding: 12px 28px;
+    border-radius: 4px;
+    border: none;
+    background: #dc3545;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+.message {
+    margin-top: 12px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.message.success {
+    color: #28a745;
+}
+
+.message.error {
+    color: #dc3545;
+}

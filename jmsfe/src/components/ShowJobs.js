@@ -1,19 +1,33 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "./ShowJobs.css";
 
 function ShowJobs() {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [recruiterName, setRecruiterName] = useState("");
 
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        const recruiterData = localStorage.getItem('recruiter');
+        
         if (!token) {
             navigate('/');
             return;
         }
+        
+        if (recruiterData) {
+            try {
+                const recruiter = JSON.parse(recruiterData);
+                setRecruiterName(recruiter.name || '');
+            } catch (err) {
+                console.log('Error parsing recruiter data:', err);
+            }
+        }
+        
         setLoading(true);
         axios
             .get("http://localhost:5000/api/jobs", { headers: token ? { Authorization: `Bearer ${token}` } : {} })
@@ -29,17 +43,6 @@ function ShowJobs() {
                 setLoading(false);
             });
     }, [navigate]);
-
-    const tableButtonStyle = {
-        padding: '6px 12px',
-        border: '1px solid #999',
-        background: '#fff',
-        color: '#333',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        fontSize: '14px',
-        minWidth: '70px'
-    };
 
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this job?')) return;
@@ -60,19 +63,30 @@ function ShowJobs() {
     };
 
     return (
-        <div style={{ padding: "20px" }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h1>Job Details</h1>
-                <div>
-                    <Link to="/job/new"><button style={{ marginRight: '8px' }}>Create Job</button></Link>
-                    <button onClick={handleLogout}>Logout</button>
+        <div className="dashboard-container">
+            <div className="dashboard-header">
+                <div className="welcome-section">
+                    <h1>Job Details</h1>
+                    {recruiterName && (
+                        <div className="welcome-message">
+                            Welcome, {recruiterName}!
+                        </div>
+                    )}
+                </div>
+                <div className="header-actions">
+                    <Link to="/job/create">
+                        <button className="btn-create">Create Job</button>
+                    </Link>
+                    <button className="btn-logout" onClick={handleLogout}>
+                        Logout
+                    </button>
                 </div>
             </div>
 
-            {loading && <p style={{ textAlign: 'center' }}>Loading...</p>}
+            {loading && <p className="loading-message">Loading...</p>}
 
-            <table style={{ borderCollapse: "collapse", width: "100%" }} border="1">
-                <thead style={{ backgroundColor: "black", color: "white" }}>
+            <table className="jobs-table" border="1">
+                <thead>
                     <tr>
                         <th>Title</th>
                         <th>Company</th>
@@ -98,16 +112,23 @@ function ShowJobs() {
                                 <td>{job.description}</td>
                                 <td>{Array.isArray(job.skills) ? job.skills.join(", ") : job.skills}</td>
                                 <td>
-                                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'nowrap', alignItems: 'center' }}>
-                                        <Link to={`/job/${job._id}`}><button style={tableButtonStyle}>Edit</button></Link>
-                                        <button style={tableButtonStyle} onClick={() => handleDelete(job._id)}>Delete</button>
+                                    <div className="table-actions">
+                                        <Link to={`/job/edit/${job._id}`}>
+                                            <button className="btn-table btn-edit">Edit</button>
+                                        </Link>
+                                        <button 
+                                            className="btn-table btn-delete" 
+                                            onClick={() => handleDelete(job._id)}
+                                        >
+                                            Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="9" style={{ textAlign: 'center' }}>
+                            <td colSpan="9" style={{ textAlign: 'center', padding: '20px' }}>
                                 {loading ? "" : "No Data Found"}
                             </td>
                         </tr>

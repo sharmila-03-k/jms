@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import "./Register.css";
 
 function Register() {
     const [name, setName] = useState("");
@@ -21,11 +22,10 @@ function Register() {
                 company,
             });
             console.log(response.data);
-            if (response.data.success === true) {
+            if (response.data.success) {
                 setMessage("Registered successfully. Redirecting...");
-                const token = response.data.data && response.data.data.token;
-                if (token) {
-                    localStorage.setItem('token', token);
+                if (response.data.data?.token) {
+                    localStorage.setItem('token', response.data.data.token);
                     localStorage.setItem('recruiter', JSON.stringify(response.data.data));
                 }
                 setTimeout(() => navigate('/dashboard'), 800);
@@ -39,22 +39,54 @@ function Register() {
     };
 
     return (
-        <div style={{ border: '2px solid black', padding: '20px', width: '400px', margin: 'auto', marginTop: '50px' }}>
+        <div className="register-container">
             <h2>Register Recruiter</h2>
-            <form onSubmit={handleRegister}>
-                <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-                <br /><br />
-                <input type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <br /><br />
-                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                <br /><br />
-                <input type="text" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                <br /><br />
-                <input type="text" placeholder="Company" value={company} onChange={(e) => setCompany(e.target.value)} />
-                <br /><br />
+            <form onSubmit={handleRegister} className="register-form">
+                <input 
+                    type="text" 
+                    placeholder="Name" 
+                    value={name} 
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                />
+                <input 
+                    type="email" 
+                    placeholder="Email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+                <input 
+                    type="password" 
+                    placeholder="Password" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+                <input 
+                    type="tel" 
+                    placeholder="Phone" 
+                    value={phone} 
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                />
+                <input 
+                    type="text" 
+                    placeholder="Company" 
+                    value={company} 
+                    onChange={(e) => setCompany(e.target.value)}
+                    required
+                />
                 <button type="submit">Register</button>
             </form>
-            <div style={{ marginTop: '10px' }}>{message}</div>
+            {message && (
+                <div className={`message-box ${message.includes("successfully") ? "success" : "error"}`}>
+                    {message}
+                </div>
+            )}
+            <div className="back-to-login">
+                <p>Already have an account? <Link to="/">Back to Login</Link></p>
+            </div>
         </div>
     );
 }
