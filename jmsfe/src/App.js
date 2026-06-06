@@ -5,6 +5,7 @@ import Register from "./components/Register";
 import SeekerRegister from "./components/SeekerRegister";
 import SeekerLogin from "./components/SeekerLogin";
 import SeekerJobs from "./components/SeekerJobs";
+import AppliedJobs from "./components/AppliedJobs";
 import JobForm from "./components/JobForm";
 import "./App.css";
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/seeker/register" element={<SeekerRegister />} />
         <Route path="/seeker/login" element={<SeekerLogin />} />
         <Route path="/seeker/jobs" element={<SeekerJobs />} />
+        <Route path="/seeker/applied" element={<AppliedJobs />} />
         <Route path="/jobs" element={<ShowJobs />} />
         <Route path="/job/create" element={<JobForm />} />
         <Route path="/job/edit/:id" element={<JobForm />} />

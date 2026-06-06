@@ -6,6 +6,7 @@ import "./ShowJobs.css";
 function SeekerJobs() {
     const [skill, setSkill] = useState("");
     const [jobs, setJobs] = useState([]);
+    const [hasSearched, setHasSearched] = useState(false);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
@@ -20,36 +21,24 @@ function SeekerJobs() {
         }
         const seekerData = JSON.parse(seeker);
         setSeekerName(seekerData.name || seekerData.email || 'Job Seeker');
-        // load all jobs initially for seeker home
-        fetchAllJobs();
     }, [navigate]);
 
-    const fetchAllJobs = async () => {
-        setLoading(true);
-        setMessage('');
-        try {
-            const res = await axios.get('http://localhost:5000/api/jobs');
-            setJobs(res.data.data || []);
-        } catch (err) {
-            console.error(err);
-            setMessage('Failed to load jobs');
-            setJobs([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Note: don't load jobs on mount — wait for seeker to search
 
     const handleSearch = async (e) => {
         e && e.preventDefault();
-        if (!skill) {
-            // if no skill entered, show all jobs
-            fetchAllJobs();
+        setHasSearched(true);
+        const query = (skill || '').trim();
+        if (!query) {
+            setJobs([]);
+            setMessageType('error');
+            setMessage('Please enter a skill to search');
             return;
         }
         setLoading(true);
         setMessage('');
         try {
-            const res = await axios.get(`http://localhost:5000/api/seeker/jobs/search?skill=${encodeURIComponent(skill)}`);
+            const res = await axios.get(`http://localhost:5000/api/seeker/jobs/search?skill=${encodeURIComponent(query)}`);
             setJobs(res.data.data || []);
         } catch (err) {
             console.error(err);
@@ -100,13 +89,15 @@ function SeekerJobs() {
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <input type="text" placeholder="Skill (e.g. React)" value={skill} onChange={(e) => setSkill(e.target.value)} />
                     <button onClick={handleSearch}>Search</button>
+                    <button onClick={() => navigate('/seeker/applied')}>My Applications</button>
                     <button className="btn-logout" onClick={handleLogout}>Logout</button>
                 </div>
             </div>
 
             {loading && <p className="loading-message">Loading...</p>}
 
-            <table className="jobs-table" border="1">
+            {hasSearched && (
+              <table className="jobs-table" border="1">
                 <thead>
                     <tr>
                         <th>Title</th>
@@ -138,6 +129,7 @@ function SeekerJobs() {
                     )}
                 </tbody>
             </table>
+            )}
             {message && (
                 <div className={`message ${messageType === 'success' ? 'success' : 'error'}`} style={{ marginTop: '20px' }}>
                     {message}
