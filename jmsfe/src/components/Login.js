@@ -1,11 +1,14 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import useForm from "../hooks/useForm";
 import "./Login.css";
 
 function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const { values, handleChange } = useForm({
+        email: "",
+        password: "",
+    });
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
     const handleLogin = async (e) => {
@@ -14,8 +17,8 @@ function Login() {
             const response = await axios.post(
                 "http://localhost:5000/api/auth/login",
                 {
-                    email: email,
-                    password: password
+                    email: values.email,
+                    password: values.password,
                 }
             );
     console.log(response.data);
@@ -40,24 +43,32 @@ function Login() {
 return (
     <div className="login-container">
         <div className="login-box">
-            <h2>Login Page</h2>
+            <div className="login-header">
+                <h2> Recruiter Login Page</h2>
+                <div className="header-actions">
+                    <Link to="/seeker/register" className="link-btn">Seeker Register</Link>
+                </div>
+            </div>
+
             <form onSubmit={handleLogin}>
                 <div className="form-group">
                     <label>Email</label>
                     <input
                         type="text"
+                        name="email"
                         placeholder="Enter Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={values.email}
+                        onChange={handleChange}
                     />
                 </div>
                 <div className="form-group">
                     <label>Password</label>
                     <input
                         type="password"
+                        name="password"
                         placeholder="Enter Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        value={values.password}
+                        onChange={handleChange}
                     />
                 </div>
                 <button type="submit" className="login-button">
@@ -65,13 +76,15 @@ return (
                 </button>
             </form>
             {message && (
-                <div className={`message ${message.includes("successful") ? "success" : "error"}`}>
+                <div className={`message ${message.toLowerCase().includes("success") ? "success" : "error"}`}>
                     {message}
                 </div>
             )}
-            <div className="register-link">
-                <p>Not registered yet?</p>
-                <Link to="/register">Register as Recruiter</Link>
+            <div className="register-link" style={{marginTop: '16px'}}>
+                <div>
+                    <p>Not registered yet?</p>
+                    <Link to="/register">Register as Recruiter</Link>
+                </div>
             </div>
         </div>
     </div>

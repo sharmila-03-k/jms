@@ -1,25 +1,28 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import useForm from "../hooks/useForm";
 import "./Register.css";
 
 function Register() {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [phone, setPhone] = useState("");
-    const [company, setCompany] = useState("");
+    const { values, handleChange } = useForm({
+        name: "",
+        email: "",
+        password: "",
+        phone: "",
+        company: "",
+    });
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
             const response = await axios.post("http://localhost:5000/api/auth/register", {
-                name,
-                email,
-                password,
-                phone,
-                company,
+                name: values.name,
+                email: values.email,
+                password: values.password,
+                phone: values.phone,
+                company: values.company,
             });
             console.log(response.data);
             if (response.data.success) {
@@ -44,37 +47,42 @@ function Register() {
             <form onSubmit={handleRegister} className="register-form">
                 <input 
                     type="text" 
+                    name="name"
                     placeholder="Name" 
-                    value={name} 
-                    onChange={(e) => setName(e.target.value)}
+                    value={values.name} 
+                    onChange={handleChange}
                     required
                 />
                 <input 
                     type="email" 
+                    name="email"
                     placeholder="Email" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={values.email} 
+                    onChange={handleChange}
                     required
                 />
                 <input 
                     type="password" 
+                    name="password"
                     placeholder="Password" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={values.password} 
+                    onChange={handleChange}
                     required
                 />
                 <input 
                     type="tel" 
+                    name="phone"
                     placeholder="Phone" 
-                    value={phone} 
-                    onChange={(e) => setPhone(e.target.value)}
+                    value={values.phone} 
+                    onChange={handleChange}
                     required
                 />
                 <input 
                     type="text" 
+                    name="company"
                     placeholder="Company" 
-                    value={company} 
-                    onChange={(e) => setCompany(e.target.value)}
+                    value={values.company} 
+                    onChange={handleChange}
                     required
                 />
                 <button type="submit">Register</button>

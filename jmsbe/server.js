@@ -5,6 +5,9 @@ const connectDB = require('./config/db');
 const seedData = require('./config/seeder');
 const jobRoutes = require('./routes/jobRoutes');
 const authRoutes = require('./routes/authRoutes');
+const seekerAuthRoutes = require('./routes/seekerAuthRoutes');
+const seekerJobRoutes = require('./routes/seekerJobRoutes');
+const applicationRoutes = require('./routes/applicationRoutes');
 
 dotenv.config();
 
@@ -17,6 +20,9 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/api/seeker/auth', seekerAuthRoutes);
+app.use('/api/seeker/jobs', seekerJobRoutes);
+app.use('/api/seeker/applications', applicationRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

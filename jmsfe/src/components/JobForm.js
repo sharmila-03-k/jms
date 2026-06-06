@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import useForm from '../hooks/useForm';
 import './JobForm.css';
 
 function JobForm() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [title, setTitle] = useState('');
-    const [companyName, setCompanyName] = useState('');
-    const [location, setLocation] = useState('');
-    const [salary, setSalary] = useState('');
-    const [jobType, setJobType] = useState('Full Time');
-    const [experience, setExperience] = useState('');
-    const [description, setDescription] = useState('');
-    const [skills, setSkills] = useState('');
+    const { values, handleChange, setValues } = useForm({
+        title: '',
+        companyName: '',
+        location: '',
+        salary: '',
+        jobType: 'Full Time',
+        experience: '',
+        description: '',
+        skills: '',
+    });
     const [message, setMessage] = useState('');
 
     useEffect(() => {
@@ -22,14 +25,16 @@ function JobForm() {
             axios.get(`http://localhost:5000/api/jobs/${id}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
                 .then(res => {
                     const job = res.data.data;
-                    setTitle(job.title || '');
-                    setCompanyName(job.companyName || '');
-                    setLocation(job.location || '');
-                    setSalary(job.salary || '');
-                    setJobType(job.jobType || 'Full Time');
-                    setExperience(job.experience || '');
-                    setDescription(job.description || '');
-                    setSkills((job.skills || []).join(', '));
+                    setValues({
+                        title: job.title || '',
+                        companyName: job.companyName || '',
+                        location: job.location || '',
+                        salary: job.salary || '',
+                        jobType: job.jobType || 'Full Time',
+                        experience: job.experience || '',
+                        description: job.description || '',
+                        skills: (job.skills || []).join(', '),
+                    });
                 })
                 .catch(err => console.error(err));
         }
@@ -38,14 +43,14 @@ function JobForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const payload = {
-            title,
-            companyName,
-            location,
-            salary,
-            jobType,
-            experience,
-            description,
-            skills: skills.split(',').map(s => s.trim()).filter(Boolean),
+            title: values.title,
+            companyName: values.companyName,
+            location: values.location,
+            salary: values.salary,
+            jobType: values.jobType,
+            experience: values.experience,
+            description: values.description,
+            skills: values.skills.split(',').map(s => s.trim()).filter(Boolean),
         };
         try {
             const token = localStorage.getItem('token');
@@ -84,14 +89,14 @@ function JobForm() {
             <div className="job-card">
                 <h2>{id ? 'Edit Job' : 'Create Job'}</h2>
                 <form onSubmit={handleSubmit} className="job-form">
-                    <input className="form-input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Job Title" />
-                    <input className="form-input" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Company Name" />
-                    <input className="form-input" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" />
-                    <input className="form-input" value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="Salary" />
-                    <input className="form-input" value={jobType} onChange={(e) => setJobType(e.target.value)} placeholder="Job Type" />
-                    <input className="form-input" value={experience} onChange={(e) => setExperience(e.target.value)} placeholder="Experience" />
-                    <textarea className="form-textarea" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" rows={4} />
-                    <input className="form-input" value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="Skills (comma separated)" />
+                    <input className="form-input" name="title" value={values.title} onChange={handleChange} placeholder="Job Title" />
+                    <input className="form-input" name="companyName" value={values.companyName} onChange={handleChange} placeholder="Company Name" />
+                    <input className="form-input" name="location" value={values.location} onChange={handleChange} placeholder="Location" />
+                    <input className="form-input" name="salary" value={values.salary} onChange={handleChange} placeholder="Salary" />
+                    <input className="form-input" name="jobType" value={values.jobType} onChange={handleChange} placeholder="Job Type" />
+                    <input className="form-input" name="experience" value={values.experience} onChange={handleChange} placeholder="Experience" />
+                    <textarea className="form-textarea" name="description" value={values.description} onChange={handleChange} placeholder="Description" rows={4} />
+                    <input className="form-input" name="skills" value={values.skills} onChange={handleChange} placeholder="Skills (comma separated)" />
                     <div className="button-group">
                         <button className="btn-primary" type="submit">
                             {id ? 'Update Job' : 'Create Job'}
